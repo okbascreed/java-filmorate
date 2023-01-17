@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.ValidationException.ValidationException;
@@ -25,7 +26,7 @@ public class FilmController {
     }
 
     @PostMapping(value = "/films")
-    public Film addFilm(@RequestBody Film film) throws ValidationException {
+    public Film addFilm(@Valid @RequestBody Film film) throws ValidationException {
         if(!validate(film)) {
             throw new ValidationException();
         } else {
@@ -38,13 +39,12 @@ public class FilmController {
     }
 
     @PutMapping(value = "/films")
-    public Film updateFilm(@RequestBody Film film) throws ValidationException {
+    public Film updateFilm(@Valid @RequestBody Film film) throws ValidationException {
         try{
             if (films.containsKey(film.getId())) {
                 if(!validate(film)) {
                     throw new ValidationException("Не удалось обновить!");
                 } else {
-                    films.remove(film.getId());
                     films.put(film.getId(), film);
                 }
             } else {
@@ -60,7 +60,7 @@ public class FilmController {
         boolean validationResult = false;
         try{
             String filmName = film.getName();
-            if(filmName.equals("")) {
+            if(filmName.isEmpty()) {
                 throw new ValidationException("Название фильма не может быть пустым.");
             } else if (film.getDescription().length() > 200) {
                 throw new ValidationException("Максимальная длина описания фильма — 200 символов.");

@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.ValidationException.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
@@ -22,7 +23,7 @@ public class UserController {
     }
 
     @PostMapping(value = "/users")
-    public User addUser(@RequestBody User user) throws ValidationException {
+    public User addUser(@Valid @RequestBody User user) throws ValidationException {
         if (!validate(user)) {
             throw new ValidationException();
         } else {
@@ -34,13 +35,12 @@ public class UserController {
     }
 
     @PutMapping(value = "/users")
-    public User updateUser(@RequestBody User user) throws ValidationException {
+    public User updateUser(@Valid @RequestBody User user) throws ValidationException {
         try {
             if (users.containsKey(user.getId())) {
                 if (!validate(user)) {
                     throw new ValidationException("Не удалось обновить данные пользователя.");
                 } else {
-                    users.remove(user.getId());
                     users.put(user.getId(), user);
                 }
             } else {
