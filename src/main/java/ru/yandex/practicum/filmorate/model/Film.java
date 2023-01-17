@@ -1,15 +1,20 @@
 package ru.yandex.practicum.filmorate.model;
 
+import jakarta.validation.constraints.DecimalMax;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
-import lombok.NonNull;
 
 import java.time.LocalDate;
 
 @Data
 public class Film {
     int id = 1;
-    @NonNull
+    @NotNull
+    @NotBlank
     String name;
+    @Size(max = 200)
     String description;
     LocalDate releaseDate;
     long duration;
