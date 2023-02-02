@@ -1,78 +1,77 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.ValidationException.ValidationException;
+import ru.yandex.practicum.filmorate.exceptions.IncorrectParameterException;
+import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.validation.Valid;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 @RestController
 public class UserController {
-    private HashMap<Integer, User> users = new HashMap<>();
-    private List<User> userArr = new ArrayList<>();
-    private int id = 1;
+    private final UserService userService;
+
+    @Autowired
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
 
     @GetMapping("/users")
     public List<User> getAllUsers() {
-        userArr.addAll(users.values());
-        return userArr;
+        return userService.findAllUsers();
     }
 
     @PostMapping(value = "/users")
     public User addUser(@Valid @RequestBody User user) throws ValidationException {
-        if (!validate(user)) {
-            throw new ValidationException();
-        } else {
-            user.setId(id);
-            id++;
-            users.put(user.getId(), user);
-        }
-        return user;
+        return userService.createUser(user);
     }
 
     @PutMapping(value = "/users")
     public User updateUser(@Valid @RequestBody User user) throws ValidationException {
-        try {
-            if (users.containsKey(user.getId())) {
-                if (!validate(user)) {
-                    throw new ValidationException("Не удалось обновить данные пользователя.");
-                } else {
-                    users.put(user.getId(), user);
-                }
-            } else {
-                throw new ValidationException("Не удалось обновить данные пользователя.");
-            }
-        } catch (ValidationException exception) {
-            throw new ValidationException(exception.getMessage());
-        }
-        return user;
+        return userService.updateUser(user);
     }
 
-    private boolean validate(User user) throws ValidationException {
-        boolean validationResult = false;
-        try {
-            String userName = user.getName();
-            String userEmail = user.getEmail();
-            String userLogin = user.getLogin();
-            if (!userEmail.contains("@")) {
-                throw new ValidationException("Электронная почта не может быть пустой и должна содержать символ @.");
-            } else if (userLogin.contains(" ") || userLogin.equals("")) {
-                throw new ValidationException("Логин не может быть пустым и содержать пробелы.");
-            } else if (user.getBirthday().isAfter(LocalDate.now())) {
-                throw new ValidationException("Дата рождения пользователя не может быть в будущем.");
-            } else {
-                validationResult = true;
-                if (userName == null || userName.equals("")) {
-                    user.setName(user.getLogin());
-                }
-            }
-        } catch (ValidationException exception) {
-            throw new ValidationException(exception.getMessage());
+    @GetMapping("/users/{id}")
+    public User findUser(@PathVariable int id) {
+        if (id <= 0) {
+            throw new IncorrectParameterException("id");
         }
-        return validationResult;
+        return userService.findUser(id);
     }
+
+    @PutMapping(value = "/users/{id}/friends/{friendId}")
+    public void addToFriendList(@PathVariable int id, @PathVariable int friendId) {
+        if (id <= 0 || friendId <= 0) {
+            throw new IncorrectParameterException("id");
+        }
+        userService.addToFriendList(id, friendId);
+    }
+
+    @DeleteMapping(value = "/users/{id}/friends/{friendId}")
+    public void removeFromFriendList(@PathVariable int id, @PathVariable int friendId) {
+        if (id <= 0 || friendId <= 0) {
+            throw new IncorrectParameterException("id");
+        }
+        userService.removeFromFriendList(id, friendId);
+    }
+
+    @GetMapping("/users/{id}/friends/common/{otherId}")
+    public List<User> getCommonFriends(@PathVariable int id, @PathVariable int friendId) {
+        if (id <= 0 || friendId <= 0) {
+            throw new IncorrectParameterException("id");
+        }
+        return userService.getMutualFriends(id, friendId);
+    }
+
+    @GetMapping("/users/{id}/friends")
+    public List<User> getFriendList(@PathVariable int id) {
+        if (id <= 0) {
+            throw new IncorrectParameterException("id");
+        }
+        return userService.getFriendList(id);
+    }
+
 }

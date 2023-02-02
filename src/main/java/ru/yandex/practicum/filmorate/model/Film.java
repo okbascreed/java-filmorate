@@ -7,6 +7,8 @@ import javax.validation.constraints.Size;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 public class Film {
@@ -25,4 +27,15 @@ public class Film {
         this.releaseDate = releaseDate;
         this.duration = duration;
     }
+
+
+    private Set<Integer> likes = new HashSet<>();
+    public void addLike(int id) {
+        likes.add(id);
+    }
+
+    public void deleteLike(int id){
+        likes.remove(id);
+    }
+
 }

@@ -7,6 +7,9 @@ import javax.validation.constraints.NotBlank;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
+
 @Data
 public class User {
     int id = 1;
@@ -25,5 +28,12 @@ public class User {
         this.name = name;
         this.birthday = birthday;
     }
+    private Set<Integer> friends = new HashSet<>();
+    public void addFriend(int id) {
+        friends.add(id);
+    }
 
+    public void deleteFriend(int id){
+        friends.remove(id);
+    }
 }
