@@ -6,6 +6,9 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import ru.yandex.practicum.filmorate.exceptions.IncorrectParameterException;
+import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 import javax.validation.Valid;
@@ -23,6 +26,19 @@ public class InMemoryUserStorage implements UserStorage {
     public List<User> findAllUsers() {
         usersArr.addAll(users.values());
         return usersArr;
+    }
+
+    public User getUserById(int id) {
+        User user;
+        if(id <=0 ){
+            throw new IncorrectParameterException("ID пользователя не может быть меньше или равен нулю.");
+        }
+        if (users.containsKey(id)) {
+            user = users.get(id);
+        } else {
+            throw new NotFoundException("Пользователь с таким ID не найден.");
+        }
+        return user;
     }
 
     public User createUser(@Valid User user) throws ValidationException {

@@ -9,6 +9,7 @@ import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -35,21 +36,23 @@ public class UserService {
 
     public User findUser(int id) {
         if (!userStorage.getUsers().containsKey(id)) {
-            throw new NotFoundException("Пользователь с таким id не найден.");
+            throw new NotFoundException("Пользователя с таким ID не существует.");
         }
         return userStorage.getUsers().get(id);
     }
 
     public void addToFriendList(int id, int friendId) {
          if(friendId<=0) {
-            throw new IncorrectParameterException("ID пользователя не может быть меньше или равен нулю.");
+             throw new IncorrectParameterException("ID пользователя не может быть меньше или равен нулю.");
         } else {
             findUser(id).addFriend(friendId);
+            findUser(friendId).addFriend(id);
         }
     }
 
     public void removeFromFriendList(int id, int friendId) {
         findUser(id).deleteFriend(friendId);
+        findUser(friendId).deleteFriend(id);
     }
 
     public List<User> getFriendList(int id) {
@@ -60,14 +63,15 @@ public class UserService {
         return friends;
     }
 
-    public List<User> getMutualFriends(int id, int otherId) {
-        mutualFriends.clear();
-        if(findUser(id).getFriends().isEmpty()) {
-            return mutualFriends;
-        }
-        mutualFriends.addAll(getFriendList(id));
-        mutualFriends.retainAll(getFriendList(otherId));
-        return mutualFriends;
+
+    public List<User> getMutualFriends(int id, int friendId) {
+        List<User> userList;
+        Set<Integer> setMutualFriends = new HashSet<>(userStorage.getUserById(id).getFriends());
+        setMutualFriends.retainAll(userStorage.getUserById(friendId ).getFriends());
+        userList = setMutualFriends.stream()
+                .map(userStorage::getUserById)
+                .collect(Collectors.toList());
+        return userList;
     }
 
 }

@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.controller;
 
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exceptions.IncorrectParameterException;
+import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
@@ -45,7 +46,7 @@ public class UserController {
     @PutMapping(value = "/users/{id}/friends/{friendId}")
     public void addToFriendList(@PathVariable int id, @PathVariable int friendId) {
         if (id <= 0 || friendId <= 0) {
-            throw new IncorrectParameterException("id");
+            throw new NotFoundException("Пользователя с таким ID не существует.");
         }
         userService.addToFriendList(id, friendId);
     }
@@ -58,8 +59,8 @@ public class UserController {
         userService.removeFromFriendList(id, friendId);
     }
 
-    @GetMapping("/users/{id}/friends/common/{otherId}")
-    public List<User> getCommonFriends(@PathVariable int id, @PathVariable int friendId) {
+    @GetMapping("/users/{id}/friends/common/{friendId}")
+    public List<User> getMutualFriends(@PathVariable int id, @PathVariable int friendId) {
         if (id <= 0 || friendId <= 0) {
             throw new IncorrectParameterException("id");
         }

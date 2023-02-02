@@ -20,6 +20,7 @@ public class User {
     @NotNull
     String login;
     String name;
+
     LocalDate birthday;
 
     public User(String email, String login, String name, LocalDate birthday){

@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exceptions.IncorrectParameterException;
+import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
@@ -53,7 +54,7 @@ public class FilmController {
     @DeleteMapping(value = "/films/{id}/like/{userId}")
     public void deleteLike(@PathVariable int id, @PathVariable int userId) {
         if(id <=0 || userId <=0 ){
-            throw new IncorrectParameterException("id");
+            throw new NotFoundException("Пользователя с таким ID не существует.");
         }
         filmService.deleteLike(id, userId);
     }
