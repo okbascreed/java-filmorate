@@ -16,7 +16,6 @@ import javax.validation.Valid;
 @Component
 public class InMemoryUserStorage implements UserStorage {
     private HashMap<Integer, User> users = new HashMap<>();
-    private List<User> usersArr = new ArrayList<>();
     private int idCount = 1;
 
     public HashMap<Integer, User> getUsers() {
@@ -24,8 +23,7 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     public List<User> findAllUsers() {
-        usersArr.addAll(users.values());
-        return usersArr;
+        return new ArrayList<>(users.values());
     }
 
     public User getUserById(int id) {

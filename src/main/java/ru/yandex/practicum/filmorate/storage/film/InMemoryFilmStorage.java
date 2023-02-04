@@ -1,6 +1,8 @@
 package ru.yandex.practicum.filmorate.storage.film;
 
 import org.springframework.stereotype.Component;
+import ru.yandex.practicum.filmorate.exceptions.IncorrectParameterException;
+import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import javax.validation.*;
@@ -10,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
+import ru.yandex.practicum.filmorate.model.User;
 
 @Component
 public class InMemoryFilmStorage implements FilmStorage {
@@ -19,13 +22,26 @@ public class InMemoryFilmStorage implements FilmStorage {
         return films;
     }
 
-    private List<Film> filmsArr = new ArrayList<>();
+    //private List<Film> filmsArr = new ArrayList<>();
     private int id = 1;
 
     public List<Film> getAllFilmsInList() {
-        filmsArr.addAll(films.values());
-        return filmsArr;
+        return new ArrayList<>(films.values());
     }
+
+    public Film getFilmById(int id){
+        Film film;
+        if(id <=0 ){
+            throw new IncorrectParameterException("ID пользователя не может быть меньше или равен нулю.");
+        }
+        if (films.containsKey(id)) {
+            film = films.get(id);
+        } else {
+            throw new NotFoundException("Пользователь с таким ID не найден.");
+        }
+        return film;
+    }
+
 
     public Film addFilm(@Valid Film film) throws ValidationException {
         if (!validate(film)) {

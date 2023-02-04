@@ -11,8 +11,10 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 import java.util.List;
 
-@RestController
+
 @Slf4j
+@RestController
+@RequestMapping("/films")
 public class FilmController {
     private final FilmService filmService;
 

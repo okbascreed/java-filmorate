@@ -11,6 +11,7 @@ import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 import java.util.*;
 import java.util.stream.Collectors;
 
+
 @Service
 public class UserService {
     private final UserStorage userStorage;
@@ -19,8 +20,6 @@ public class UserService {
     public UserService(UserStorage userStorage) {
         this.userStorage = userStorage;
     }
-
-    List<User> mutualFriends = new ArrayList<>();
 
     public List<User> findAllUsers(){
         return userStorage.findAllUsers();
@@ -38,7 +37,7 @@ public class UserService {
         if (!userStorage.getUsers().containsKey(id)) {
             throw new NotFoundException("Пользователя с таким ID не существует.");
         }
-        return userStorage.getUsers().get(id);
+        return userStorage.getUserById(id);
     }
 
     public void addToFriendList(int id, int friendId) {

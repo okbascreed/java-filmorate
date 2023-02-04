@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exceptions.IncorrectParameterException;
@@ -40,7 +41,7 @@ public class FilmService {
         if (!filmStorage.findAllFilms().containsKey(id)) {
             throw new NotFoundException("Фильм с таким id не найден");
         }
-        return filmStorage.findAllFilms().get(id);
+        return filmStorage.getFilmById(id);
     }
 
     public void addLike(int id, int userId) {
