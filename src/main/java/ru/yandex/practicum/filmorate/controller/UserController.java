@@ -23,22 +23,22 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping("/users")
+    @GetMapping
     public List<User> getAllUsers() {
         return userService.findAllUsers();
     }
 
-    @PostMapping(value = "/users")
+    @PostMapping
     public User addUser(@Valid @RequestBody User user) throws ValidationException {
         return userService.createUser(user);
     }
 
-    @PutMapping(value = "/users")
+    @PutMapping //(value = "/users")
     public User updateUser(@Valid @RequestBody User user) throws ValidationException {
         return userService.updateUser(user);
     }
 
-    @GetMapping("/users/{id}")
+    @GetMapping("/{id}")
     public User findUser(@PathVariable int id) {
         if (id <= 0) {
             throw new IncorrectParameterException("id");
@@ -46,7 +46,7 @@ public class UserController {
         return userService.findUser(id);
     }
 
-    @PutMapping(value = "/users/{id}/friends/{friendId}")
+    @PutMapping(value = "/{id}/friends/{friendId}")
     public void addToFriendList(@PathVariable int id, @PathVariable int friendId) {
         if (id <= 0 || friendId <= 0) {
             throw new NotFoundException("Пользователя с таким ID не существует.");
@@ -54,7 +54,7 @@ public class UserController {
         userService.addToFriendList(id, friendId);
     }
 
-    @DeleteMapping(value = "/users/{id}/friends/{friendId}")
+    @DeleteMapping(value = "/{id}/friends/{friendId}")
     public void removeFromFriendList(@PathVariable int id, @PathVariable int friendId) {
         if (id <= 0 || friendId <= 0) {
             throw new IncorrectParameterException("id");
@@ -62,7 +62,7 @@ public class UserController {
         userService.removeFromFriendList(id, friendId);
     }
 
-    @GetMapping("/users/{id}/friends/common/{friendId}")
+    @GetMapping("/{id}/friends/common/{friendId}")
     public List<User> getMutualFriends(@PathVariable int id, @PathVariable int friendId) {
         if (id <= 0 || friendId <= 0) {
             throw new IncorrectParameterException("id");
@@ -70,7 +70,7 @@ public class UserController {
         return userService.getMutualFriends(id, friendId);
     }
 
-    @GetMapping("/users/{id}/friends")
+    @GetMapping("/{id}/friends")
     public List<User> getFriendList(@PathVariable int id) {
         if (id <= 0) {
             throw new IncorrectParameterException("id");

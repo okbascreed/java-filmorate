@@ -22,7 +22,6 @@ public class InMemoryFilmStorage implements FilmStorage {
         return films;
     }
 
-    //private List<Film> filmsArr = new ArrayList<>();
     private int id = 1;
 
     public List<Film> getAllFilmsInList() {
@@ -31,13 +30,10 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     public Film getFilmById(int id){
         Film film;
-        if(id <=0 ){
-            throw new IncorrectParameterException("ID пользователя не может быть меньше или равен нулю.");
-        }
         if (films.containsKey(id)) {
             film = films.get(id);
         } else {
-            throw new NotFoundException("Пользователь с таким ID не найден.");
+            throw new NotFoundException("Фильм с таким ID не найден.");
         }
         return film;
     }

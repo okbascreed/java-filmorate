@@ -28,7 +28,7 @@ public class InMemoryUserStorage implements UserStorage {
 
     public User getUserById(int id) {
         User user;
-        if(id <=0 ){
+        if(id <= 0){
             throw new IncorrectParameterException("ID пользователя не может быть меньше или равен нулю.");
         }
         if (users.containsKey(id)) {
