@@ -1,32 +1,29 @@
 package ru.yandex.practicum.filmorate.storage.user;
 
 import org.springframework.stereotype.Component;
-
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
 import ru.yandex.practicum.filmorate.exceptions.IncorrectParameterException;
 import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
+
 import javax.validation.Valid;
+import java.time.LocalDate;
+import java.util.*;
 
-@Component
+@Component("inMemoryUserStorage")
 public class InMemoryUserStorage implements UserStorage {
-    private HashMap<Integer, User> users = new HashMap<>();
-    private int idCount = 1;
 
-    public HashMap<Integer, User> getUsers() {
-        return users;
-    }
+    public Map<Integer, User> users;
 
+    private Integer idCount;
+
+    @Override
     public List<User> findAllUsers() {
         return new ArrayList<>(users.values());
     }
 
-    public User getUserById(int id) {
+    @Override
+    public User getUserById(Integer id) {
         User user;
         if(id <= 0){
             throw new IncorrectParameterException("ID пользователя не может быть меньше или равен нулю.");
@@ -39,6 +36,7 @@ public class InMemoryUserStorage implements UserStorage {
         return user;
     }
 
+    @Override
     public User createUser(@Valid User user) throws ValidationException {
         if (!validate(user)) {
             throw new ValidationException();
@@ -50,6 +48,7 @@ public class InMemoryUserStorage implements UserStorage {
         return user;
     }
 
+    @Override
     public User updateUser(@Valid User user) throws ValidationException {
         try {
             if (users.containsKey(user.getId())) {
@@ -67,6 +66,19 @@ public class InMemoryUserStorage implements UserStorage {
         return user;
     }
 
+    @Override
+    public User deleteUser(Integer userId) throws ValidationException {
+        if (userId == null) {
+            throw new ValidationException("Передан пустой аргумент!");
+        }
+        if (!users.containsKey(userId)) {
+            throw new NotFoundException("Пользователь с ID=" + userId + " не найден!");
+        }
+        for (User user : users.values()) {
+            user.getFriends().remove(userId);
+        }
+        return users.remove(userId);
+    }
 
     private boolean validate(User user) throws ValidationException {
         boolean validationResult = false;
@@ -91,5 +103,4 @@ public class InMemoryUserStorage implements UserStorage {
         }
         return validationResult;
     }
-
 }
