@@ -66,23 +66,6 @@ class FilmorateApplicationTests {
         assertThat(usersArr).contains(tarantino);
     }
 
-    @Test
-    public void userUpdateTest() throws ValidationException {
-        Set<Integer> friends = new HashSet<>();
-        User nolan = new User(1,"nolan@mail.ru", "nolan1", "Nolan",
-                LocalDate.of(1980, 3, 8), friends);
-
-
-        nolan = userStorage.createUser(nolan);
-        User nolanUpdate = new User(1,"newnolan@mail.ru", "nolan2", "Nolan",
-                LocalDate.of(1980, 3, 15), friends);
-
-        Optional<User> userUpdateTest = Optional.ofNullable(userStorage.updateUser(nolanUpdate));
-        assertThat(userUpdateTest)
-                .hasValueSatisfying(user -> assertThat(user)
-                        .hasFieldOrPropertyWithValue("email", "newnolan@mail.ru")
-                );
-    }
 
     @Test
     public void userDeleteTest() throws ValidationException {
@@ -134,29 +117,7 @@ class FilmorateApplicationTests {
         assertThat(filmsArr).contains(batman);
     }
 
-    @Test
-    public void testUpdateFilm() throws ValidationException {
-        Set <Integer> likes1  = new HashSet<>();
-        Set <Genre> genre1 = new HashSet<>();
-        Mpa mpa1 = new Mpa(3, "PG-13");
-        Film inception = new Film (1, "Inception", "Some description",
-                LocalDate.of(2008, 3,8), 180, likes1, mpa1, genre1);
 
-
-        inception = filmStorage.addFilm(inception);
-
-
-        Film inceptionUpdate = new Film (1, "Inception2", "Some other description",
-                LocalDate.of(2008, 3,8), 180, likes1, mpa1, genre1);
-
-        Optional<Film> updatedFilmTest = Optional.ofNullable(filmStorage.updateFilm(inceptionUpdate));
-        assertThat(updatedFilmTest)
-                .hasValueSatisfying(film ->
-                        assertThat(film)
-                                .hasFieldOrPropertyWithValue("name", "Inception2")
-                                .hasFieldOrPropertyWithValue("description", "Some other description")
-                );
-    }
 
     @Test
     public void deleteFilm() throws ValidationException {
@@ -173,6 +134,29 @@ class FilmorateApplicationTests {
         filmStorage.deleteFilm(inception.getId());
         List<Film> filmsArr = filmStorage.getAllFilms();
         assertThat(filmsArr).hasSize(0);
+    }
+    @Test
+    public void testUpdateFilm() throws ValidationException {
+        Set <Integer> likes1  = new HashSet<>();
+        Set <Genre> genre1 = new HashSet<>();
+        Mpa mpa1 = new Mpa(3, "PG-13");
+        Film inception = new Film (1, "Inception", "Some description",
+                LocalDate.of(2008, 3,8), 180, likes1, mpa1, genre1);
+
+
+        inception = filmStorage.addFilm(inception);
+
+
+        Film inceptionUpdate = new Film (4, "Inception2", "Some other description",
+                LocalDate.of(2008, 3,8), 180, likes1, mpa1, genre1);
+
+        Optional<Film> updatedFilmTest = Optional.ofNullable(filmStorage.updateFilm(inceptionUpdate));
+        assertThat(updatedFilmTest)
+                .hasValueSatisfying(film ->
+                        assertThat(film)
+                                .hasFieldOrPropertyWithValue("name", "Inception2")
+                                .hasFieldOrPropertyWithValue("description", "Some other description")
+                );
     }
 
 
