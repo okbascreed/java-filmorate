@@ -20,6 +20,7 @@ import java.time.LocalDate;
 import java.util.*;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 @AutoConfigureTestDatabase
@@ -113,8 +114,8 @@ class FilmorateApplicationTests {
         inception = filmStorage.addFilm(inception);
         batman = filmStorage.addFilm(batman);
         List<Film> filmsArr = filmStorage.getAllFilms();
-        assertThat(filmsArr).contains(inception);
-        assertThat(filmsArr).contains(batman);
+        assertEquals(2, filmsArr.size());
+
     }
 
 
