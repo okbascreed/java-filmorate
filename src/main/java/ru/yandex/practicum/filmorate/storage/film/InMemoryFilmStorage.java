@@ -1,43 +1,24 @@
 package ru.yandex.practicum.filmorate.storage.film;
 
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.filmorate.exceptions.IncorrectParameterException;
 import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
-import ru.yandex.practicum.filmorate.model.Film;
-
-import javax.validation.*;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
-import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.model.Film;
+import javax.validation.*;
 
-@Component
+import java.time.LocalDate;
+import java.util.*;
+
+@Component("inMemoryFilmStorage")
 public class InMemoryFilmStorage implements FilmStorage {
-    private final HashMap<Integer, Film> films = new HashMap<>();
+    private Map<Integer, Film> films = new HashMap<>();
+    private Integer id = 0;
 
-    public HashMap<Integer, Film> findAllFilms() {
-        return films;
-    }
 
-    private int id = 1;
-
-    public List<Film> getAllFilmsInList() {
+    @Override
+    public List<Film> getAllFilms() {
         return new ArrayList<>(films.values());
     }
-
-    public Film getFilmById(int id){
-        Film film;
-        if (films.containsKey(id)) {
-            film = films.get(id);
-        } else {
-            throw new NotFoundException("Фильм с таким ID не найден.");
-        }
-        return film;
-    }
-
 
     public Film addFilm(@Valid Film film) throws ValidationException {
         if (!validate(film)) {
@@ -68,6 +49,27 @@ public class InMemoryFilmStorage implements FilmStorage {
         return film;
     }
 
+    @Override
+    public Film getFilmById(Integer id){
+        Film film;
+        if (films.containsKey(id)) {
+            film = films.get(id);
+        } else {
+            throw new NotFoundException("Фильм с таким ID не найден.");
+        }
+        return film;
+    }
+
+    @Override
+    public Film deleteFilm(Integer filmId) throws ValidationException {
+        if (filmId == null) {
+            throw new ValidationException("Передан пустой аргумент!");
+        }
+        if (!films.containsKey(filmId)) {
+            throw new NotFoundException("Фильм с ID=" + filmId + " не найден!");
+        }
+        return films.remove(filmId);
+    }
 
     private boolean validate(Film film) throws ru.yandex.practicum.filmorate.exceptions.ValidationException {
         boolean validationResult = false;

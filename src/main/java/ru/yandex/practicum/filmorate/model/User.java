@@ -1,40 +1,58 @@
 package ru.yandex.practicum.filmorate.model;
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.NotBlank;
-
+import lombok.Builder;
 import lombok.Data;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.PastOrPresent;
+import javax.validation.constraints.Pattern;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 @Data
+@Builder
 public class User {
-    int id = 1;
+    private Integer id;
     @Email
-    String email;
-
+    private String email;
     @NotBlank
-    @NotNull
-    String login;
-    String name;
+    private String login;
+    private String name;
+    @PastOrPresent
+    private LocalDate birthday;
+    private Set<Integer> friends;
 
-    LocalDate birthday;
-
-    public User(String email, String login, String name, LocalDate birthday){
+    public User(Integer id, String email, String login, String name, LocalDate birthday, Set<Integer> friends) {
+        this.id = id;
         this.email = email;
         this.login = login;
         this.name = name;
+        if ((name == null) || (name.isEmpty()) || (name.isBlank())) {
+            this.name = login;
+        }
         this.birthday = birthday;
-    }
-    private Set<Integer> friends = new HashSet<>();
-    public void addFriend(int id) {
-        friends.add(id);
+        this.friends = friends;
+        if (friends == null) {
+            this.friends = new HashSet<>();
+        }
     }
 
-    public void deleteFriend(int id){
-        friends.remove(id);
+    public void setName(String name) {
+        if ((name == null) || (name.isEmpty()) || (name.isBlank())) {
+            this.name = login;
+        }
+    }
+
+    public Map<String, Object> toMap() {
+        Map<String, Object> values = new HashMap<>();
+        values.put("email", email);
+        values.put("login", login);
+        values.put("name", name);
+        values.put("birthday", birthday);
+        return values;
     }
 }

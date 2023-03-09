@@ -1,41 +1,53 @@
 package ru.yandex.practicum.filmorate.model;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
-
+import lombok.Builder;
 import lombok.Data;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.Size;
 import java.time.LocalDate;
-import java.util.HashSet;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 @Data
+@Builder
 public class Film {
-    int id = 1;
-    @NotNull
+    private Integer id;
     @NotBlank
-    String name;
-    @Size(max = 200)
-    String description;
-    LocalDate releaseDate;
-    long duration;
+    private String name;
+    @Size(min = 1, max = 200)
+    private String description;
+    @NotNull
+    private LocalDate releaseDate;
+    @Positive
+    private Integer duration;
+    private Set<Integer> likes;
+    @NotNull
+    private Mpa mpa;
+    private Set<Genre> genres;
 
-    public Film(String name, String description, LocalDate releaseDate, long duration){
+    public Film(Integer id, String name, String description, LocalDate releaseDate, Integer duration,
+                Set<Integer> likes, Mpa mpa, Set<Genre> genres) {
+        this.id = id;
         this.name = name;
         this.description = description;
         this.releaseDate = releaseDate;
         this.duration = duration;
+        this.likes = likes;
+        this.mpa = mpa;
+        this.genres = genres;
     }
 
-
-    private Set<Integer> likes = new HashSet<>();
-    public void addLike(int id) {
-        likes.add(id);
+    public Map<String, Object> toMap() {
+        Map<String, Object> values = new HashMap<>();
+        values.put("name", name);
+        values.put("description", description);
+        values.put("release_Date", releaseDate);
+        values.put("duration", duration);
+        values.put("rating_id", mpa.getId());
+        return values;
     }
-
-    public void deleteLike(int id){
-        likes.remove(id);
-    }
-
 }

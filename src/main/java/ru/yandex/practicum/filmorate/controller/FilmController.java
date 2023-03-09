@@ -1,22 +1,20 @@
 package ru.yandex.practicum.filmorate.controller;
 
-import javax.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exceptions.IncorrectParameterException;
-import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
+
+import javax.validation.Valid;
 import java.util.List;
 
-
-@Slf4j
 @RestController
 @RequestMapping("/films")
+@Slf4j
 public class FilmController {
-    private final FilmService filmService;
+    private FilmService filmService;
 
     @Autowired
     public FilmController(FilmService filmService) {
@@ -24,50 +22,46 @@ public class FilmController {
     }
 
     @GetMapping
-    public List<Film> getAllFilms() {
-        return filmService.findAllFilms();
+    public List<Film> getFilms() {
+        return filmService.getAllFilms();
     }
 
-    @PostMapping
-    public Film addFilm(@Valid @RequestBody Film film) throws ValidationException {
-        return filmService.addFilm(film);
-    }
-
-    @PutMapping
-    public Film updateFilm(@Valid @RequestBody Film film) throws ValidationException {
-        return filmService.updateFilm(film);
-    }
     @GetMapping("/{id}")
-    public Film findFilm(@PathVariable int id) {
-        if(id <= 0){
-            throw new IncorrectParameterException("id");
-        }
-
-        return filmService.findFilm(id);
-    }
-
-    @PutMapping(value = "/{id}/like/{userId}")
-    public void setLike(@PathVariable int id, @PathVariable int userId) {
-        if (id <= 0 || userId <= 0) {
-            throw new IncorrectParameterException("id");
-        }
-        filmService.addLike(id, userId);
-    }
-    @DeleteMapping(value = "/{id}/like/{userId}")
-    public void deleteLike(@PathVariable int id, @PathVariable int userId) {
-        if(id <=0 || userId <=0 ){
-            throw new NotFoundException("Пользователя с таким ID не существует.");
-        }
-        filmService.deleteLike(id, userId);
+    public Film getFilmById(@PathVariable Integer id) {
+        return filmService.getFilmById(id);
     }
 
     @GetMapping("/popular")
-    public List<Film> getPopularFilms
-            (@RequestParam(value = "count", defaultValue = "10", required = false) String count) {
-        if(Integer.parseInt(count) < 0){
-            throw new IncorrectParameterException("count");
-        }
-        return filmService.getPopularFilms(Integer.parseInt(count));
+    public List<Film> getPopular(@RequestParam(name = "count", defaultValue = "10") Integer count) throws ValidationException {
+        return filmService.getPopular(count);
     }
 
+    @ResponseBody
+    @PostMapping
+    public Film create(@Valid @RequestBody Film film) throws ValidationException {
+        film = filmService.addFilm(film);
+        return film;
+    }
+
+    @ResponseBody
+    @PutMapping
+    public Film update(@Valid @RequestBody Film film) throws ValidationException {
+        film = filmService.updateFilm(film);
+        return film;
+    }
+
+    @PutMapping("/{id}/like/{userId}")
+    public void addLike(@PathVariable Integer id, @PathVariable Integer userId) {
+        filmService.addLike(id, userId);
+    }
+
+    @DeleteMapping("/{id}/like/{userId}")
+    public void deleteLike(@PathVariable Integer id, @PathVariable Integer userId) {
+        filmService.deleteLike(id, userId);
+    }
+
+    @DeleteMapping("/{id}")
+    public Film delete(@PathVariable Integer id) throws ValidationException {
+        return filmService.deleteFilm(id);
+    }
 }
