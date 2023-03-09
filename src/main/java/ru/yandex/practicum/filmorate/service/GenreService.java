@@ -30,8 +30,7 @@ public class GenreService {
     }
 
     public void putGenres(Film film) {
-        genreStorage.delete(film);
-        genreStorage.add(film);
+        genreStorage.putGenres(film);
     }
 
     public Set<Genre> getFilmGenres(Integer filmId) {

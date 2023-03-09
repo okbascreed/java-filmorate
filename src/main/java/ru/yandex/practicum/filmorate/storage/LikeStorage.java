@@ -4,24 +4,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.service.GenreService;
-import ru.yandex.practicum.filmorate.service.MpaService;
+import ru.yandex.practicum.filmorate.model.Mpa;
 
-import java.util.HashSet;
-import java.util.List;
-
+import java.util.*;
 
 @Component
 public class LikeStorage {
     private final JdbcTemplate jdbcTemplate;
-    private MpaService mpaService;
-    private GenreService genreService;
+    private GenreStorage genreStorage;
 
     @Autowired
-    public LikeStorage(JdbcTemplate jdbcTemplate, MpaService mpaService, GenreService genreService) {
+    public LikeStorage(JdbcTemplate jdbcTemplate, GenreStorage genreStorage) {
         this.jdbcTemplate = jdbcTemplate;
-        this.mpaService = mpaService;
-        this.genreService = genreService;
+        this.genreStorage = genreStorage;
     }
 
     public void addLike(Integer filmId, Integer userId) {
@@ -35,7 +30,17 @@ public class LikeStorage {
     }
 
     public List<Film> getPopular(Integer count) {
-        String getPopularQuery = "SELECT id, name, description, release_date, duration, rating_id FROM FILMS LEFT JOIN FILM_LIKES ON films.id = film_likes.film_id GROUP BY films.id ORDER BY COUNT(film_likes.user_id) DESC LIMIT ?";
+
+        String getPopularQuery = "SELECT f.id, f.name, f.description, f.release_date, f.duration," +
+                " f.rating_id, rm.id as mpa_id," +
+                " rm.name as mpa_name, g.name as genre_name, " +
+                "g.id as genre_id, fg.genre_id as fg_genre_id, fm.user_id as likes FROM FILMS as f " +
+                "LEFT JOIN FILM_LIKES as fm ON f.id = fm.film_id " +
+                "LEFT JOIN ratings_mpa as rm ON rm.id = f.rating_id " +
+                "LEFT JOIN film_genres as fg on f.id = fg.film_id " +
+                "LEFT JOIN genres as g on g.id  = fg.genre_id " +
+                "GROUP BY f.id ORDER BY COUNT(fm.user_id) DESC LIMIT ?";
+
 
         return jdbcTemplate.query(getPopularQuery, (rs, rowNum) -> new Film(
                         rs.getInt("id"),
@@ -43,9 +48,10 @@ public class LikeStorage {
                         rs.getString("description"),
                         rs.getDate("release_Date").toLocalDate(),
                         rs.getInt("duration"),
-                        new HashSet<>(getLikes(rs.getInt("id"))),
-                        mpaService.getMpaById(rs.getInt("rating_id")),
-                        genreService.getFilmGenres(rs.getInt("id"))),
+                        new HashSet<>(List.of(rs.getInt("likes"))),
+                        new Mpa(rs.getInt("mpa_id"), rs.getString("mpa_name")),
+                        new HashSet<>(genreStorage.getFilmGenres(rs.getInt("id")))),
+
                 count);
     }
 

@@ -60,4 +60,23 @@ public class FilmService {
         return likeStorage.getPopular(count);
     }
 
+    public List<Film> getAllFilms(){
+        return filmStorage.getAllFilms();
+    }
+
+    public Film getFilmById(Integer filmId) {
+        return filmStorage.getFilmById(filmId);
+    }
+
+    public Film addFilm(Film film) throws ValidationException {
+        return filmStorage.addFilm(film);
+    }
+
+    public Film updateFilm(Film film) throws ValidationException {
+        return filmStorage.updateFilm(film);
+    }
+
+    public Film deleteFilm(Integer filmId) throws ValidationException {
+        return filmStorage.deleteFilm(filmId);
+    }
 }

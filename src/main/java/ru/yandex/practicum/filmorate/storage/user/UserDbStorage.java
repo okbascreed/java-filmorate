@@ -63,7 +63,6 @@ public class UserDbStorage implements UserStorage {
                     user.getName(),
                     user.getBirthday(),
                     user.getId());
-            log.info("Пользователь с ID={} успешно обновлен", user.getId());
             return user;
         } else {
             throw new NotFoundException("Пользователь с ID=" + user.getId() + " не найден!");

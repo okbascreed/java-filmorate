@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.FriendStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
@@ -22,6 +23,8 @@ public class UserService {
         this.userStorage = userStorage;
         this.friendStorage = friendStorage;
     }
+
+
 
     public void addFriend(Integer userId, Integer friendId) {
         friendStorage.addFriend(userId, friendId);
@@ -51,4 +54,25 @@ public class UserService {
         }
         return new ArrayList<>(intersection);
     }
+
+    public List<User> findAllUsers(){
+        return userStorage.findAllUsers();
+    }
+
+    public User getUserById(Integer userId) {
+        return userStorage.getUserById(userId);
+    }
+
+    public User createUser(User user) throws ValidationException {
+        return userStorage.createUser(user);
+    }
+
+    public User updateUser(User user) throws ValidationException {
+        return userStorage.updateUser(user);
+    }
+
+    public User deleteUser(Integer userId) throws ValidationException {
+        return userStorage.deleteUser(userId);
+    }
+
 }

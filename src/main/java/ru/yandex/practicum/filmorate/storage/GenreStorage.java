@@ -62,4 +62,8 @@ public class GenreStorage {
                 rs.getInt("genre_id"), rs.getString("name")), filmId
         );
     }
+    public void putGenres(Film film) {
+       delete(film);
+       add(film);
+    }
 }
